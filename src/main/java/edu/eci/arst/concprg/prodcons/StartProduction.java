@@ -23,7 +23,7 @@ public class StartProduction {
         Queue<Integer> queue=new LinkedBlockingQueue<>();
         
         
-        new Producer(queue,Long.MAX_VALUE).start();
+        new Producer(queue,1).start(); // Se cambio el limite aceptado de la cola
         
         //let the producer create products for 5 seconds (stock).
         try {

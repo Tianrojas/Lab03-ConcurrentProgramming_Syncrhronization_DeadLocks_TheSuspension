@@ -9,10 +9,20 @@
 
 Control de hilos con wait/notify. Productor/consumidor.
 
-1. Revise el funcionamiento del programa y ejecútelo. Mientras esto ocurren, ejecute jVisualVM y revise el consumo de CPU del proceso correspondiente. A qué se debe este consumo?, cual es la clase responsable?
+1. Revise el funcionamiento del programa y ejecútelo. Mientras esto ocurren, ejecute jVisualVM y revise el consumo de CPU del proceso correspondiente. A qué se debe este consumo?, cual es la clase responsable?  
+	![img.png](img/img.png) 
+	* _El consumo de mi CPU se encuentra en el rango del 25% al 34%. Se debe a la ejecución continua de los hilos del productor y el consumidor, que están corriendo en paralelo y compitiendo por la CPU._ \
+      _En el programa, el productor y el consumidor son implementados como hilos separados utilizando la clase Thread. Ambos hilos están en bucles infinitos_ (while (true)) _y están ejecutando continuamente. El productor está generando datos aleatorios y agregándolos a la cola, mientras que el consumidor está retirando elementos de la cola y consumiéndolos._ \
+      _El consumo de CPU es compartido entre el productor y el consumidor, y varía debido a la naturaleza aleatoria de la generación de datos por el productor y la velocidad a la que el consumidor consume elementos. La variabilidad en el consumo de CPU puede ser normal y depende de factores como la velocidad de generación y consumo de elementos, la velocidad del procesador y el planificador de hilos del sistema operativo._ \
+      _La clase responsable del alto consumo de CPU es principalmente la clase **StartProduction**, que es donde se inician los hilos del productor y el consumidor. Sin embargo, el alto consumo de CPU se debe principalmente a la ejecución continua de los hilos del productor y el consumidor en segundo plano, ya que están diseñados para funcionar en bucles infinitos._
 2. Haga los ajustes necesarios para que la solución use más eficientemente la CPU, teniendo en cuenta que -por ahora- la producción es lenta y el consumo es rápido. Verifique con JVisualVM que el consumo de CPU se reduzca.
+	![img.png](img/img1.png) 
+	* _Con una producción lenta (Cada vez que se llena la cola espera 5s) y consumo rápido (Cada vez que la cola esta vacía espera 1s)_
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
-
+	![img.png](img/img2.png)
+	* _Con una producción lenta (Cada vez que se llena la cola espera 1s) y consumo rápido (Cada vez que la cola esta vacía espera 5s)_ 
+    ![img.png](img/img3.png) 
+    * _Se verífica que al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores colocando como límite a un elemento_
 ##### Parte II. – Avance para el jueves, antes de clase.
 
 Sincronización y Dead-Locks.
@@ -27,13 +37,13 @@ Sincronización y Dead-Locks.
 	* El juego podría nunca tener un único ganador. Lo más probable es que al final sólo queden dos, peleando indefinidamente quitando y sumando puntos de vida.
 
 2. Revise el código e identifique cómo se implemento la funcionalidad antes indicada. Dada la intención del juego, un invariante debería ser que la sumatoria de los puntos de vida de todos los jugadores siempre sea el mismo(claro está, en un instante de tiempo en el que no esté en proceso una operación de incremento/reducción de tiempo). Para este caso, para N jugadores, cual debería ser este valor?.
-
+	*  _Para este caso, para N jugadores, el valor de la sumatoria de los puntos de vida de todos los jugadores debería ser **100N**._
 3. Ejecute la aplicación y verifique cómo funcionan las opción ‘pause and check’. Se cumple el invariante?.
-
+	*  _Inicialmente, no se cumple el invariante ya que tiende a variar su valor_
 4. Una primera hipótesis para que se presente la condición de carrera para dicha función (pause and check), es que el programa consulta la lista cuyos valores va a imprimir, a la vez que otros hilos modifican sus valores. Para corregir esto, haga lo que sea necesario para que efectivamente, antes de imprimir los resultados actuales, se pausen todos los demás hilos. Adicionalmente, implemente la opción ‘resume’.
 
 5. Verifique nuevamente el funcionamiento (haga clic muchas veces en el botón). Se cumple o no el invariante?.
-
+	
 6. Identifique posibles regiones críticas en lo que respecta a la pelea de los inmortales. Implemente una estrategia de bloqueo que evite las condiciones de carrera. Recuerde que si usted requiere usar dos o más ‘locks’ simultáneamente, puede usar bloques sincronizados anidados:
 
 	```java
@@ -55,8 +65,8 @@ Sincronización y Dead-Locks.
 	* Corrija el problema anterior __SIN hacer uso de sincronización__, pues volver secuencial el acceso a la lista compartida de inmortales haría extremadamente lenta la simulación.
 
 11. Para finalizar, implemente la opción STOP.
+	* STOP implementado
 
-<!--
 ### Criterios de evaluación
 
 1. Parte I.
@@ -80,12 +90,10 @@ Sincronización y Dead-Locks.
 			* En caso de sincronizar el acceso a la pelea con un LOCK común, se evaluará como M, pues esto hace secuencial todas las peleas.
 			* La lista de inmortales debe reducirse en la medida que éstos mueran, pero esta operación debe realizarse SIN sincronización, sino haciendo uso de una colección concurrente (no bloqueante).
 
-	
-
 	* Funcionalidad:
 		* Se cumple con el invariante al usar la aplicación con 10, 100 o 1000 hilos.
 		* La aplicación puede reanudar y finalizar(stop) su ejecución.
 		
-		-->
+		
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />Este contenido hace parte del curso Arquitecturas de Software del programa de Ingeniería de Sistemas de la Escuela Colombiana de Ingeniería, y está licenciado como <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
